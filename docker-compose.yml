@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+  web:
+    image: example/employee
+    build: .
+    depends_on:
+     - rabbit
+     - db
+    ports:
+     - 8080:8080
+    networks:
+     - webnet
+  db:
+    image: postgres:9.6
+    restart: always
+    ports:
+     - 5432:5432
+    environment:
+     - POSTGRES_PASSWORD=password
+     - POSTGRES_USER=postgres
+     - POSTGRES_DB=employee
+     - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+     - /var/lib/postgresql/data
+    networks:
+     - webnet
+  rabbit:
+    image: rabbitmq:3.8.0-beta.4-management
+    ports:
+     - 15672:15672
+     - 5672:5672
+    networks:
+     - webnet
+volumes:
+    db:
+networks:
+    webnet:  
